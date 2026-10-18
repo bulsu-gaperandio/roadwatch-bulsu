@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrator Sign In • RoadWatch BulSU</title>
+  
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/logo.svg">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <script>
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem('roadwatch_theme') || 'brand-daylight';
+        var darkThemes = ['corporate-aurora', 'deep-space', 'nebula-midnight'];
+        var mode = darkThemes.indexOf(savedTheme) !== -1 ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.documentElement.setAttribute('data-theme-mode', mode);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'brand-daylight');
+        document.documentElement.setAttribute('data-theme-mode', 'light');
+      }
+    })();
+
+    // If administrator is already signed in, redirect directly to dashboard
+    if (sessionStorage.getItem('roadwatch_admin_auth') === 'true') {
+      window.location.replace('admin-dashboard.html');
+    }
+  </script>
+</head>
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1.5rem;">
+
+  <div class="login-card" style="width: 100%; max-width: 460px;">
+    
+    <div class="login-header">
+      <img src="../assets/icons/logo.svg" alt="RoadWatch BulSU Logo" class="login-logo">
+      <h2 style="font-size: 1.7rem; margin-bottom: 0.35rem; color: var(--color-starlight);">Administrator Sign In</h2>
+      <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 0;">BulSU CICT • Road Hazard Review &amp; Monitoring Portal</p>
+    </div>
+
+    <!-- Demonstration Access Credentials Box -->
+    <div class="demo-credentials-box">
+      <div style="font-weight: 700; color: var(--color-starlight); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
+        <span>🔑</span> <span>Demonstration Credentials</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.2rem;">
+        <span>Username:</span> <code>admin</code>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span>Password:</span> <code>bulsu2026</code>
+      </div>
+      <div style="font-size: 0.74rem; color: #64748B; margin-top: 0.45rem; border-top: 1px dashed rgba(56, 189, 248, 0.15); padding-top: 0.35rem;">
+        Temporary session authentication for IT 305 evaluation demonstration.
+      </div>
+    </div>
+
+    <!-- Error Alert Display -->
+    <div id="standalone-login-error" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #FCA5A5; padding: 0.75rem 1rem; border-radius: var(--border-radius-md); font-size: 0.85rem; margin-bottom: 1.25rem;"></div>
+
+    <form id="standalone-login-form">
+      <div class="form-group">
+        <label class="form-label" for="standalone-username">Administrator ID or Username</label>
+        <input type="text" class="form-control" id="standalone-username" placeholder="e.g. admin" required autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="standalone-password">Password</label>
+        <div class="password-input-group">
+          <input type="password" class="form-control" id="standalone-password" placeholder="Enter administrator password" required autocomplete="current-password">
+          <button type="button" class="btn-toggle-password" id="standalone-toggle-pw" aria-label="Toggle password visibility">
+            👁️
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.75rem; display: flex; flex-direction: column; gap: 0.75rem;">
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+          <span>🔐 Sign In to Administrator Portal</span>
+        </button>
+
+        <a href="../index.html" class="btn btn-secondary" style="width: 100%; text-align: center;">
+          <span>← Back to Citizen Website</span>
+        </a>
+      </div>
+    </form>
+
+  </div>
+
+  <script>
+    // Password toggle
+    const pwInput = document.getElementById('standalone-password');
+    const toggleBtn = document.getElementById('standalone-toggle-pw');
+    toggleBtn.addEventListener('click', () => {
+      const isPw = pwInput.type === 'password';
+      pwInput.type = isPw ? 'text' : 'password';
+      toggleBtn.innerHTML = isPw ? '👁️‍🗨️' : '👁️';
+    });
+
+    // Form submit
+    document.getElementById('standalone-login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const u = document.getElementById('standalone-username').value.trim().toLowerCase();
+      const p = pwInput.value.trim();
+      const errBox = document.getElementById('standalone-login-error');
+
+      if (u === 'admin' && p === 'bulsu2026') {
+        sessionStorage.setItem('roadwatch_admin_auth', 'true');
+        sessionStorage.setItem('roadwatch_admin_user', 'Highway Administrator');
+        window.location.replace('../index.html#admin-dashboard');
+      } else {
+        errBox.textContent = 'Invalid administrator credentials. Demo access: admin / bulsu2026';
+        errBox.style.display = 'block';
+        pwInput.focus();
+      }
+    });
+  </script>
+
+</body>
+</html>

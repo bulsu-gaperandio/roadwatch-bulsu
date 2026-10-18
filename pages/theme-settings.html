@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme Selection • RoadWatch BulSU</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/logo.svg">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <script>
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem('roadwatch_theme') || 'brand-daylight';
+        var darkThemes = ['corporate-aurora', 'deep-space', 'nebula-midnight'];
+        var mode = darkThemes.indexOf(savedTheme) !== -1 ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.documentElement.setAttribute('data-theme-mode', mode);
+      } catch (e) {}
+    })();
+    // Seamless routing to shared in-memory session shell
+    window.location.replace('../index.html#themes');
+  </script>
+</head>
+<body>
+  <div style="padding: 3rem; text-align: center; color: var(--color-text-primary);">
+    <h2>Opening Multi-Theme Selection...</h2>
+    <p class="text-muted">Redirecting to the unified in-memory application...</p>
+    <p><a href="../index.html#themes" class="btn btn-primary">Click here if not redirected automatically</a></p>
+  </div>
+</body>
+</html>

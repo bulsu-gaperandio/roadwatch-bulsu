@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoadWatch BulSU • Pothole Reporting & Road Monitoring Web System</title>
+  
+  <!-- Favicon / Brand Icon -->
+  <link rel="icon" type="image/svg+xml" href="assets/icons/logo.svg">
+
+  <!-- Leaflet CSS for High-Fidelity Interactive Map Fallback -->
+  <link rel="stylesheet" href="css/leaflet.css">
+
+  <!-- Core Space-Inspired Brand Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/map.css">
+  <link rel="stylesheet" href="css/responsive.css">
+
+  <!-- Zero-Flicker Synchronous Theme Loader Script -->
+  <script>
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem('roadwatch_theme') || 'brand-daylight';
+        var darkThemes = ['corporate-aurora', 'deep-space', 'nebula-midnight'];
+        var mode = darkThemes.indexOf(savedTheme) !== -1 ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.documentElement.setAttribute('data-theme-mode', mode);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'brand-daylight');
+        document.documentElement.setAttribute('data-theme-mode', 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- Mobile Drawer Backdrop Overlay -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <div class="app-container">
+
+    <!-- ======================================================================
+         PERSISTENT SIDEBAR NAVIGATION
+         ====================================================================== -->
+    <aside class="sidebar" id="sidebar">
+      
+      <!-- System Brand Header -->
+      <div class="sidebar-brand">
+        <img src="assets/icons/logo.svg" alt="RoadWatch Logo" class="sidebar-logo">
+        <div class="brand-text">
+          <span class="brand-title">RoadWatch <span class="text-cyan">BulSU</span></span>
+          <span class="brand-subtitle">Road Hazard Monitoring</span>
+        </div>
+      </div>
+
+      <!-- Citizen Navigation Items -->
+      <nav class="sidebar-nav" id="nav-section-citizen">
+        <div class="nav-section-title">Citizen Navigation</div>
+        
+        <a href="#home" class="nav-item active" data-view="view-home">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          <span>Home</span>
+        </a>
+
+        <a href="#report" class="nav-item" data-view="view-report">
+          <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+          <span>Report a Pothole</span>
+        </a>
+
+        <a href="#map" class="nav-item" data-view="view-map">
+          <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+          <span>Pothole Map</span>
+        </a>
+
+        <a href="#my-reports" class="nav-item" data-view="view-my-reports">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <span>My Reports</span>
+        </a>
+
+        <a href="#themes" class="nav-item" data-view="view-themes">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a7 7 0 0 0 7 7c0 2-2 3-2 3s-1 1-1 2a2 2 0 0 1-2 2h-1"></path><circle cx="8" cy="10" r="1"></circle><circle cx="12" cy="7" r="1"></circle><circle cx="16" cy="10" r="1"></circle></svg>
+          <span>Theme Selection</span>
+        </a>
+
+        <!-- Discrete Administrator Sign In link in citizen navigation -->
+        <div style="margin-top: auto; padding-top: 0.75rem; border-top: 1px solid rgba(56, 189, 248, 0.12);">
+          <a href="#admin-login" class="nav-item nav-discrete-signin" data-view="view-admin-login">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Administrator Sign In</span>
+          </a>
+        </div>
+      </nav>
+
+      <!-- Administrator Navigation Items (Visible strictly after Administrator authentication) -->
+      <nav class="sidebar-nav" id="nav-section-admin" style="display: none;">
+        <div class="nav-section-title">Administrator Portal</div>
+
+        <a href="#admin-dashboard" class="nav-item" data-view="view-admin-dashboard">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="#admin-reviews" class="nav-item" data-view="view-admin-reviews">
+          <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          <span>Report Review Queue</span>
+          <span class="nav-badge" id="nav-pending-badge">2</span>
+        </a>
+
+        <a href="#admin-approved" class="nav-item" data-view="view-admin-approved">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          <span>Approved Potholes</span>
+        </a>
+
+        <a href="#admin-history" class="nav-item" data-view="view-admin-history">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+          <span>Report History</span>
+        </a>
+
+        <a href="#themes" class="nav-item" data-view="view-themes">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a7 7 0 0 0 7 7c0 2-2 3-2 3s-1 1-1 2a2 2 0 0 1-2 2h-1"></path><circle cx="8" cy="10" r="1"></circle><circle cx="12" cy="7" r="1"></circle><circle cx="16" cy="10" r="1"></circle></svg>
+          <span>Theme Selection</span>
+        </a>
+
+        <!-- Administrator Sign Out Action -->
+        <div style="margin-top: auto; padding-top: 0.75rem; border-top: 1px solid rgba(239, 68, 68, 0.2);">
+          <a href="#home" class="nav-item nav-signout-btn btn-admin-signout">
+            <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <span>Sign Out</span>
+          </a>
+        </div>
+      </nav>
+
+      <!-- Sidebar Footer Academic Affiliation -->
+      <div class="sidebar-footer">
+        <div class="academic-badge">
+          <strong>Bulacan State University</strong>
+          <span>CICT • BSIT-WMAD</span>
+          <span style="color: var(--color-electric-cyan); font-weight: 600;">IT 305 Final Student Output</span>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ======================================================================
+         MAIN CONTENT AREA WRAPPER
+         ====================================================================== -->
+    <div class="main-wrapper">
+
+      <!-- Sticky Top Navigation Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-menu-toggle" id="mobile-drawer-toggle" aria-label="Toggle navigation drawer">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="page-breadcrumb">
+            <h1 class="page-title" id="topbar-page-title">RoadWatch BulSU • Citizen Portal</h1>
+            <span class="page-subtitle" id="topbar-page-subtitle">Bulacan Pothole Reporting &amp; Road Hazard Monitoring</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Administrator Session Stats & Controls (Visible strictly when signed in as Admin) -->
+          <div id="topbar-admin-stats" style="display: none; align-items: center; gap: 0.75rem;">
+            <span class="admin-session-badge">🛡️ Admin Portal</span>
+            <div class="topbar-stats">
+              <div class="stat-chip" title="Pending Administrator Verification">
+                <span class="stat-chip-dot pending"></span>
+                <span>Pending: <strong id="topbar-pending-count" class="text-starlight">2</strong></span>
+              </div>
+              <div class="stat-chip" title="Confirmed Approved Potholes on Public Map">
+                <span class="stat-chip-dot approved"></span>
+                <span>Approved: <strong id="topbar-approved-count" class="text-cyan">2</strong></span>
+              </div>
+            </div>
+            <button type="button" class="btn btn-danger btn-sm btn-admin-signout" id="topbar-admin-signout" title="Sign out of Administrator Session">
+              <span>Sign Out</span>
+            </button>
+          </div>
+
+          <!-- Quick Theme Selector Button -->
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-topbar-themes" title="Select UI Theme">
+            <span>🎨 Themes</span>
+          </button>
+
+          <!-- Google Maps API Configuration Dialog Trigger -->
+          <button type="button" class="btn btn-secondary btn-sm btn-open-maps-modal" title="Configure real Google Maps API Key">
+            <span>⚙️ Maps API</span>
+          </button>
+
+          <!-- Quick Session Reset -->
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-demo-session" title="Reset in-memory data to seed reports">
+            <span>🔄 Reset Demo</span>
+          </button>
+
+          <!-- Citizen Report CTA (Visible only in Citizen Mode) -->
+          <a href="#report" class="btn btn-primary btn-sm" id="topbar-citizen-cta" data-view="view-report">
+            <span>+ Report Pothole</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- Main Dynamic Content Container -->
+      <main class="content-area">
+
+        <!-- ==================================================================
+             VIEW 1: LANDING PAGE & SYSTEM OVERVIEW (#home)
+             ================================================================== -->
+        <section class="view-section active" id="view-home">
+          
+          <!-- Hero Section -->
+          <div class="card" style="margin-bottom: 2rem; background: radial-gradient(circle at 85% 15%, rgba(0, 242, 254, 0.12), transparent 50%), var(--gradient-surface); border-color: rgba(0, 242, 254, 0.35);">
+            <div style="max-width: 820px;">
+              <span class="badge badge-approved" style="margin-bottom: 1rem; border-color: rgba(0, 242, 254, 0.4);">
+                BulSU CICT IT 305 • Advanced Web Development
+              </span>
+              <h2 style="font-size: 2.2rem; margin-bottom: 0.9rem; line-height: 1.2;">
+                Civic Road Hazard Reporting &amp; <span class="text-gradient">Real-Time Pothole Monitoring</span>
+              </h2>
+              <p style="font-size: 1.05rem; line-height: 1.6; margin-bottom: 1.5rem; color: var(--color-starlight);">
+                Empowering Bulakenyo motorists and pedestrians to safeguard our roads. Submit photographic evidence of hazardous potholes, pinpoint exact coordinates along MacArthur Highway and Malolos thoroughfares, and track administrator verification before live publication on our confirmed hazard map.
+              </p>
+              <div class="hero-actions" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <a href="#report" class="btn btn-primary btn-lg" data-view="view-report">
+                  <span>📸 Report a Pothole</span>
+                </a>
+                <a href="#map" class="btn btn-secondary btn-lg" data-view="view-map">
+                  <span>🗺️ View Public Pothole Map</span>
+                </a>
+                <a href="#my-reports" class="btn btn-secondary btn-lg" data-view="view-my-reports">
+                  <span>📋 Track My Reports</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Real-Time In-Memory Statistics -->
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="stat-icon total">📊</div>
+              <div class="stat-info">
+                <span class="stat-value" id="stat-total-reports">5</span>
+                <span class="stat-label">Total Submissions</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon pending">⏳</div>
+              <div class="stat-info">
+                <span class="stat-value" id="stat-pending-reviews">2</span>
+                <span class="stat-label">Pending Review</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon approved">✓</div>
+              <div class="stat-info">
+                <span class="stat-value" id="stat-approved-potholes">2</span>
+                <span class="stat-label">Confirmed Potholes</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon rejected">✕</div>
+              <div class="stat-info">
+                <span class="stat-value" id="stat-rejected-reports">1</span>
+                <span class="stat-label">Rejected Reports</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3-Step Verification Workflow Overview -->
+          <div style="margin-bottom: 2.25rem;">
+            <div style="margin-bottom: 1.25rem;">
+              <h3>How RoadWatch Operates</h3>
+              <p class="text-muted">A verified, transparent workflow bridging citizen reports and municipal road maintenance.</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+              
+              <div class="card">
+                <div style="font-size: 2rem; color: var(--color-electric-cyan); margin-bottom: 0.75rem;">1️⃣</div>
+                <h4 style="margin-bottom: 0.5rem; color: var(--color-starlight);">Citizen Submits Report</h4>
+                <p style="font-size: 0.9rem;">Motorists or students take a photo of the road damage, designate exact GPS coordinates on the interactive map, and submit it for inspection.</p>
+                <div style="margin-top: 1rem;">
+                  <span class="badge badge-pending">Status: Pending Review</span>
+                </div>
+              </div>
+
+              <div class="card">
+                <div style="font-size: 2rem; color: var(--color-cosmic-purple); margin-bottom: 0.75rem;">2️⃣</div>
+                <h4 style="margin-bottom: 0.5rem; color: var(--color-starlight);">Administrator Verification</h4>
+                <p style="font-size: 0.9rem;">Human highway evaluators inspect high-resolution photographs to determine if the road damage constitutes a legitimate pothole hazard.</p>
+                <div style="margin-top: 1rem;">
+                  <span class="badge" style="background: rgba(139, 92, 246, 0.15); color: var(--color-cosmic-purple); border: 1px solid rgba(139, 92, 246, 0.3);">
+                    Manual Human Review
+                  </span>
+                </div>
+              </div>
+
+              <div class="card">
+                <div style="font-size: 2rem; color: var(--color-status-approved); margin-bottom: 0.75rem;">3️⃣</div>
+                <h4 style="margin-bottom: 0.5rem; color: var(--color-starlight);">Live Map Publication</h4>
+                <p style="font-size: 0.9rem;">Once approved, the pothole instantly appears on the public Google Map. Clicking the marker displays the original photograph and road information.</p>
+                <div style="margin-top: 1rem;">
+                  <span class="badge badge-approved">Status: Approved Pin</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Academic Evaluation Disclaimer Note -->
+          <div class="card" style="background-color: #070B1F; border-left: 4px solid var(--color-cosmic-purple);">
+            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+              <div style="font-size: 1.8rem; color: var(--color-cosmic-purple);">ℹ️</div>
+              <div>
+                <h4 style="color: var(--color-starlight); margin-bottom: 0.3rem;">Academic Demonstration Note</h4>
+                <p style="margin-bottom: 0; font-size: 0.88rem;">
+                  This web application is developed for the <strong>IT 305 Advanced Web Development Final Student Output</strong> at Bulacan State University (College of Information and Communications Technology, BSIT-WMAD). All report approvals and rejections operate within an in-memory session state for frontend demonstration purposes.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Authorized Personnel Gateway Footer -->
+          <div style="margin-top: 2rem; text-align: center; padding: 1.25rem; border-top: 1px solid rgba(56, 189, 248, 0.1); font-size: 0.85rem; color: var(--color-muted-slate);">
+            <span>Authorized Municipal Highway Personnel or Inspector?</span>
+            <a href="#admin-login" data-view="view-admin-login" style="margin-left: 0.5rem; font-weight: 600; color: var(--color-electric-cyan);">
+              Administrator Sign In Gateway →
+            </a>
+          </div>
+
+        </section>
+
+
+        <!-- ==================================================================
+             VIEW 2: REPORT A POTHOLE PAGE (#report)
+             ================================================================== -->
+        <section class="view-section" id="view-report">
+          
+          <div class="card" style="margin-bottom: 1.5rem; background: var(--gradient-surface);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <h2>Report a Road Pothole Hazard</h2>
+                <p style="margin-bottom: 0;">Provide photograph evidence and pin the exact road coordinates in Malolos / Bulacan.</p>
+              </div>
+              <div>
+                <span class="badge badge-pending">Submissions enter Pending Review queue</span>
+              </div>
+            </div>
+          </div>
+
+          <form id="report-pothole-form">
+            <div class="reporting-grid">
+
+              <!-- Left Column: Photograph Upload & Road Details -->
+              <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                
+                <!-- Photograph Upload Card -->
+                <div class="card">
+                  <div class="card-header">
+                    <span class="card-title">
+                      <span>📷</span> <span>1. Road Photograph Evidence</span>
+                    </span>
+                    <span class="text-muted" style="font-size: 0.78rem;">JPEG, PNG, WebP up to 8MB</span>
+                  </div>
+
+                  <!-- Drag & Drop Zone -->
+                  <div class="upload-dropzone" id="photo-dropzone">
+                    <div class="upload-icon">📸</div>
+                    <h4 style="color: var(--color-starlight); margin-bottom: 0.35rem;">Click to Upload or Drag Road Photograph</h4>
+                    <p style="font-size: 0.85rem; margin-bottom: 0.5rem;">Take a photo of the damaged pavement or suspected pothole.</p>
+                    <span class="btn btn-secondary btn-sm">Browse Files</span>
+                    <input type="file" id="report-photo-input" accept="image/*" style="display: none;">
+                  </div>
+
+                  <!-- Upload Preview Container -->
+                  <div class="upload-preview-container" id="photo-preview-container" style="display: none;">
+                    <img id="photo-preview-img" src="" alt="Pothole Upload Preview">
+                  </div>
+                  <div class="preview-actions" id="photo-preview-actions" style="display: none;">
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-replace-photo">Replace Photo</button>
+                    <button type="button" class="btn btn-danger btn-sm" id="btn-remove-photo">Remove Photo</button>
+                  </div>
+                </div>
+
+                <!-- Road & Location Description Card -->
+                <div class="card">
+                  <div class="card-header">
+                    <span class="card-title">
+                      <span>📝</span> <span>2. Road Identification &amp; Details</span>
+                    </span>
+                  </div>
+
+                  <!-- Quick Preset Selection for BulSU & Malolos Demonstration -->
+                  <div class="form-group">
+                    <label class="form-label" for="sample-location-preset">Quick BulSU / Malolos Location Presets (Demo)</label>
+                    <select class="form-select" id="sample-location-preset">
+                      <option value="">-- Choose a realistic Malolos road preset or enter manually --</option>
+                      <option value="bulsu">MacArthur Highway Km 44 (Front of BulSU Main Campus Gate)</option>
+                      <option value="barasoain">Paseo del Congreso Street (Near Barasoain Church)</option>
+                      <option value="capitol">Bulacan Provincial Capitol Boulevard (Near Gymnasium)</option>
+                      <option value="tikay">Tikay Junction Highway (Commercial Center)</option>
+                      <option value="tabang">Tabang Flyover Access Road</option>
+                    </select>
+                    <div class="form-help">Selecting a preset auto-populates the street name, barangay, and map coordinates.</div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label" for="report-road-name">Road / Street Name <span class="text-cyan">*</span></label>
+                      <input type="text" class="form-control" id="report-road-name" placeholder="e.g. MacArthur Highway Km 44" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label" for="report-barangay">Barangay / Locality <span class="text-cyan">*</span></label>
+                      <input type="text" class="form-control" id="report-barangay" placeholder="e.g. Guinhawa, Malolos City" required>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label" for="report-severity">Observed Severity Estimate</label>
+                      <select class="form-select" id="report-severity">
+                        <option value="Low">Low - Superficial wear / minor dip</option>
+                        <option value="Medium" selected>Medium - Noticeable pothole cavity</option>
+                        <option value="High">High - Deep crater / lane hazard</option>
+                        <option value="Critical">Critical - Severe crater causing vehicle damage</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label" for="report-reporter-name">Your Name / Affiliation</label>
+                      <input type="text" class="form-control" id="report-reporter-name" placeholder="e.g. Juan Dela Cruz (BulSU Student)">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="report-description">Description of Observed Hazard</label>
+                    <textarea class="form-control" id="report-description" rows="3" placeholder="Describe depth, water accumulation, traffic impact, or exact landmark proximity..."></textarea>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!-- Right Column: Interactive Location Picker Map -->
+              <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                
+                <div class="card" style="height: 100%; display: flex; flex-direction: column;">
+                  <div class="card-header">
+                    <span class="card-title">
+                      <span>📍</span> <span>3. Exact Coordinate Pinning</span>
+                    </span>
+                    <button type="button" class="btn btn-outline-cyan btn-sm" id="btn-use-geolocation">
+                      <span>📍</span> Current GPS
+                    </button>
+                  </div>
+
+                  <p style="font-size: 0.85rem; margin-bottom: 0.75rem;">
+                    Click anywhere on the map or drag the pin directly onto the road crater location.
+                  </p>
+
+                  <!-- Map Picker Canvas -->
+                  <div style="flex: 1; min-height: 330px; position: relative;">
+                    <div id="report-location-picker-map"></div>
+                  </div>
+
+                  <!-- Coordinates Metadata Display -->
+                  <div style="margin-top: 1rem; padding: 0.75rem 1rem; background: #080D24; border-radius: var(--border-radius-md); border: var(--border-subtle); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
+                    <div>
+                      <span class="text-muted">Latitude:</span> <strong id="display-lat" class="text-cyan">14.85270</strong>
+                    </div>
+                    <div>
+                      <span class="text-muted">Longitude:</span> <strong id="display-lng" class="text-cyan">120.81600</strong>
+                    </div>
+                  </div>
+
+                  <input type="hidden" id="report-lat" value="14.8527">
+                  <input type="hidden" id="report-lng" value="120.8160">
+
+                  <!-- Submission Button -->
+                  <div style="margin-top: 1.5rem;">
+                    <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                      <span>🚀 Submit Road Hazard Report</span>
+                    </button>
+                    <p class="text-muted text-center" style="font-size: 0.78rem; margin-top: 0.5rem; margin-bottom: 0;">
+                      The report will receive an ID and be queued for administrator review before map placement.
+                    </p>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+          </form>
+
+        </section>
+
+
+        <!-- ==================================================================
+             VIEW 3: CONFIRMED PUBLIC POTHOLE MAP (#map)
+             ================================================================== -->
+        <section class="view-section" id="view-map">
+          
+          <div class="map-page-wrapper">
+            
+            <!-- Map Search & Filter Controls -->
+            <div class="map-toolbar">
+              <div class="map-search-box">
+                <span>🔍</span>
+                <input type="text" id="map-search-input" placeholder="Search road name or barangay (e.g. MacArthur, Guinhawa, San Gabriel)...">
+              </div>
+
+              <div class="map-filters">
+                <select class="form-select" id="map-severity-filter" style="width: auto; padding: 0.45rem 0.85rem; font-size: 0.85rem;">
+                  <option value="all">All Severities</option>
+                  <option value="Critical">Critical Only</option>
+                  <option value="High">High Only</option>
+                  <option value="Medium">Medium Only</option>
+                  <option value="Low">Low Only</option>
+                </select>
+
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-map-center">
+                  <span>🎓 Focus BulSU Campus</span>
+                </button>
+
+                <div style="font-size: 0.84rem; padding: 0.45rem 0.75rem; background: #080D24; border-radius: var(--border-radius-md); border: var(--border-subtle);">
+                  <span>Confirmed Potholes: <strong class="text-cyan" id="map-visible-count">2</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Development Notice & Google Maps API Fallback Banner -->
+            <div class="dev-map-notice">
+              <div class="notice-content">
+                <span class="notice-icon">🛡️</span>
+                <div class="notice-text">
+                  <strong>High-Fidelity Interactive Map Active</strong> • Centered on BulSU Main Campus &amp; Malolos City.
+                  Markers reflect real-time in-memory state. Approved potholes appear immediately.
+                  <span class="text-muted">(Requires Google Maps API Key for live Google tiles).</span>
+                </div>
+              </div>
+              <button type="button" class="btn btn-outline-cyan btn-sm btn-open-maps-modal">
+                Configure Maps Key
+              </button>
+            </div>
+
+            <!-- Large Interactive Map Canvas -->
+            <div class="map-canvas-container">
+              <div id="public-google-map"></div>
+
+              <!-- Empty State Overlay (When no approved potholes match search/filter) -->
+              <div class="map-empty-state" id="map-empty-state" style="display: none;">
+                <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔍</div>
+                <h4 style="margin-bottom: 0.35rem; color: var(--color-starlight);">No Confirmed Potholes Match</h4>
+                <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 1rem;">
+                  No approved road pothole reports match your current filter criteria or search query.
+                </p>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('map-search-input').value=''; document.getElementById('map-severity-filter').value='all'; window.App.triggerMapFilter();">
+                  Clear Filters
+                </button>
+              </div>
+
+              <!-- Map Legend Widget -->
+              <div class="map-legend-card">
+                <div class="legend-title">Hazard Map Legend</div>
+                <div class="legend-items">
+                  <div class="legend-item">
+                    <span class="legend-dot approved"></span>
+                    <span>Approved Pothole</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot critical"></span>
+                    <span>Critical / High Severity</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-dot campus"></span>
+                    <span>BulSU Main Campus</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Interactive Selected Pothole Side Drawer -->
+              <aside class="map-side-drawer" id="map-side-drawer">
+                <div class="drawer-header">
+                  <span style="font-weight: 700; color: var(--color-starlight);">Pothole Investigation Record</span>
+                  <button type="button" class="btn-close" id="btn-close-side-drawer">&times;</button>
+                </div>
+                
+                <div class="drawer-body">
+                  <div class="drawer-photo-wrap">
+                    <img id="drawer-photo" src="assets/images/pothole-placeholder.svg" alt="Pothole Inspection Photo">
+                  </div>
+
+                  <div class="drawer-detail-row">
+                    <div class="drawer-detail-label">Report ID &amp; Verification Status</div>
+                    <div class="drawer-detail-value" style="display: flex; align-items: center; justify-content: space-between;">
+                      <span id="drawer-id" class="text-cyan" style="font-weight: 700;">REP-2026-001</span>
+                      <span class="badge badge-approved">✓ Confirmed Pothole</span>
+                    </div>
+                  </div>
+
+                  <div class="drawer-detail-row">
+                    <div class="drawer-detail-label">Road or Street</div>
+                    <div class="drawer-detail-value" id="drawer-road" style="font-weight: 600;">MacArthur Highway</div>
+                  </div>
+
+                  <div class="drawer-detail-row">
+                    <div class="drawer-detail-label">Barangay &amp; City</div>
+                    <div class="drawer-detail-value" id="drawer-location">Brgy. Guinhawa, Malolos City</div>
+                  </div>
+
+                  <div class="drawer-detail-row">
+                    <div class="drawer-detail-label">GPS Geolocation Coordinates</div>
+                    <div class="drawer-detail-value text-cyan" id="drawer-coords">14.85270° N, 120.81600° E</div>
+                  </div>
+
+                  <div class="drawer-detail-row">
+                    <div class="drawer-detail-label">Severity Level</div>
+                    <div class="drawer-detail-value" id="drawer-severity">High</div>
+                  </div>
+
+                  <div class="drawer-detail-row">
+                    <div class="drawer-detail-label">Report Description</div>
+                    <div class="drawer-detail-value text-muted" id="drawer-desc" style="font-size: 0.85rem; line-height: 1.4;">
+                      Deep asphalt crater right across BulSU main gate.
+                    </div>
+                  </div>
+
+                  <div class="drawer-detail-row">
+                    <div class="drawer-detail-label">Submission Date &amp; Time</div>
+                    <div class="drawer-detail-value" id="drawer-date">2026-10-15 08:30 AM</div>
+                  </div>
+
+                  <div class="drawer-detail-row">
+                    <div class="drawer-detail-label">Highway Inspector Review Notes</div>
+                    <div class="drawer-detail-value" id="drawer-notes" style="color: #38BDF8; font-size: 0.85rem; background: rgba(56, 189, 248, 0.08); padding: 0.5rem; border-radius: var(--border-radius-sm);">
+                      Verified on site. Priority asphalt patching assigned.
+                    </div>
+                  </div>
+                </div>
+              </aside>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ==================================================================
+             VIEW 4: CITIZEN REPORT HISTORY (#my-reports)
+             ================================================================== -->
+        <section class="view-section" id="view-my-reports">
+          
+          <div class="card" style="margin-bottom: 1.5rem; background: var(--gradient-surface);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <h2>My Submitted Road Hazard Reports</h2>
+                <p style="margin-bottom: 0;">Review status tracking for citizen pothole submissions during this demo session.</p>
+              </div>
+              <a href="#report" class="btn btn-primary btn-sm" data-view="view-report">
+                + Submit New Report
+              </a>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="table-responsive">
+              <table class="table-custom">
+                <thead>
+                  <tr>
+                    <th>Report ID</th>
+                    <th>Photo</th>
+                    <th>Road / Thoroughfare</th>
+                    <th>Submission Date</th>
+                    <th>Review Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="my-reports-tbody">
+                  <!-- Populated dynamically by AppState -->
+                </tbody>
+              </table>
+            </div>
+
+            <div style="margin-top: 1.25rem; font-size: 0.8rem; color: var(--color-muted-slate); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+              <span>⚠️ <strong>Demo History:</strong> Authentication is not implemented in this frontend-only phase. Reports are held in memory.</span>
+              <span>BulSU CICT IT 305</span>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ==================================================================
+             VIEW 5: ADMINISTRATOR DASHBOARD (#admin-dashboard)
+             ================================================================== -->
+        <section class="view-section" id="view-admin-dashboard">
+          
+          <!-- Admin Welcome Header -->
+          <div class="card" style="margin-bottom: 1.75rem; background: radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15), transparent 50%), var(--gradient-surface); border-color: rgba(139, 92, 246, 0.35);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <span class="badge" style="background: rgba(139, 92, 246, 0.15); color: var(--color-cosmic-purple); border: 1px solid rgba(139, 92, 246, 0.4); margin-bottom: 0.5rem;">
+                  Highway Maintenance &amp; Public Works Oversight
+                </span>
+                <h2>Administrator Control Center</h2>
+                <p style="margin-bottom: 0;">Examine citizen-submitted photographs, verify pavement craters, and manage live public map hazard markers.</p>
+              </div>
+              <div style="display: flex; gap: 0.75rem;">
+                <a href="#admin-reviews" class="btn btn-primary" data-view="view-admin-reviews">
+                  <span>🛡️ Open Review Queue</span>
+                </a>
+                <a href="#map" class="btn btn-secondary" data-view="view-map">
+                  <span>🗺️ Public Map Monitor</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Metric Cards (Calculated dynamically) -->
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="stat-icon total">📋</div>
+              <div class="stat-info">
+                <span class="stat-value" id="admin-stat-total">5</span>
+                <span class="stat-label">Total Submissions</span>
+              </div>
+            </div>
+
+            <div class="stat-card" style="border-color: rgba(245, 158, 11, 0.35);">
+              <div class="stat-icon pending">⏳</div>
+              <div class="stat-info">
+                <span class="stat-value" id="admin-stat-pending" style="color: var(--color-status-pending);">2</span>
+                <span class="stat-label">Awaiting Verification</span>
+              </div>
+            </div>
+
+            <div class="stat-card" style="border-color: rgba(16, 185, 129, 0.35);">
+              <div class="stat-icon approved">✓</div>
+              <div class="stat-info">
+                <span class="stat-value" id="admin-stat-approved" style="color: var(--color-status-approved);">2</span>
+                <span class="stat-label">Approved &amp; On Map</span>
+              </div>
+            </div>
+
+            <div class="stat-card" style="border-color: rgba(239, 68, 68, 0.35);">
+              <div class="stat-icon rejected">✕</div>
+              <div class="stat-info">
+                <span class="stat-value" id="admin-stat-rejected" style="color: var(--color-status-rejected);">1</span>
+                <span class="stat-label">Rejected / Invalid</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Submissions Table -->
+          <div class="card" style="margin-bottom: 1.75rem;">
+            <div class="card-header">
+              <span class="card-title">
+                <span>🕒</span> <span>Recent Citizen Road Submissions</span>
+              </span>
+              <a href="#admin-reviews" class="btn btn-outline-cyan btn-sm" data-view="view-admin-reviews">
+                View Full Queue →
+              </a>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table-custom">
+                <thead>
+                  <tr>
+                    <th>Report ID</th>
+                    <th>Photo</th>
+                    <th>Road / Location</th>
+                    <th>Severity</th>
+                    <th>Review Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-recent-tbody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Workflow Instructions Card -->
+          <div class="card" style="background: #070B1F;">
+            <h4 style="margin-bottom: 0.6rem; color: var(--color-starlight);">Administrator Verification Guidelines</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; font-size: 0.85rem; color: var(--color-muted-slate);">
+              <div>
+                <strong class="text-cyan">1. Inspect Road Photo:</strong>
+                <p>Open the report to review high-resolution photo evidence. Ensure visible asphalt loss and cavity depth.</p>
+              </div>
+              <div>
+                <strong class="text-cyan">2. Verify Location:</strong>
+                <p>Check the pinned coordinates along Malolos / Bulacan roadways to prevent misidentified road stretches.</p>
+              </div>
+              <div>
+                <strong class="text-cyan">3. Approve or Reject:</strong>
+                <p>Approved reports appear immediately on the public map. Rejected reports are excluded permanently from the confirmed map.</p>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ==================================================================
+             VIEW 6: ADMINISTRATOR REVIEW QUEUE (#admin-reviews)
+             ================================================================== -->
+        <section class="view-section" id="view-admin-reviews">
+          
+          <div class="card" style="margin-bottom: 1.5rem; background: var(--gradient-surface);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <h2>Pothole Report Verification Queue</h2>
+                <p style="margin-bottom: 0;">Inspect photographs, assign severity classifications, and approve or reject submissions.</p>
+              </div>
+              <div style="font-size: 0.85rem; color: var(--color-muted-slate);">
+                BulSU Highway Evaluation Portal
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            
+            <!-- Queue Filter Controls Bar -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button type="button" class="btn btn-secondary btn-sm queue-filter-btn active" data-filter="all">All Reports</button>
+                <button type="button" class="btn btn-secondary btn-sm queue-filter-btn" data-filter="pending">Pending Reviews</button>
+                <button type="button" class="btn btn-secondary btn-sm queue-filter-btn" data-filter="approved">Approved Only</button>
+                <button type="button" class="btn btn-secondary btn-sm queue-filter-btn" data-filter="rejected">Rejected Only</button>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 260px;">
+                <span class="text-muted">🔍</span>
+                <input type="text" id="queue-search-input" class="form-control" placeholder="Search queue by street, barangay, or ID..." style="padding: 0.45rem 0.85rem; font-size: 0.88rem;">
+              </div>
+            </div>
+
+            <!-- Queue Table -->
+            <div class="table-responsive">
+              <table class="table-custom">
+                <thead>
+                  <tr>
+                    <th>Report ID</th>
+                    <th>Photo Thumbnail</th>
+                    <th>Road / Location</th>
+                    <th>Date &amp; Time</th>
+                    <th>Severity</th>
+                    <th>Review Status</th>
+                    <th>Inspection Action</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-queue-tbody">
+                  <!-- Populated dynamically by AdminReviewController -->
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ==================================================================
+             VIEW 7: ADMINISTRATOR SIGN-IN GATEWAY (#admin-login)
+             ================================================================== -->
+        <section class="view-section" id="view-admin-login">
+          <div class="login-wrapper">
+            <div class="login-card">
+              <div class="login-header">
+                <img src="assets/icons/logo.svg" alt="RoadWatch Logo" class="login-logo">
+                <h2 style="font-size: 1.65rem; margin-bottom: 0.35rem; color: var(--color-starlight);">Administrator Sign In</h2>
+                <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 0;">Highway Evaluation &amp; Road Verification Portal</p>
+              </div>
+
+              <!-- Demo Credentials Information Callout -->
+              <div class="demo-credentials-box">
+                <div style="font-weight: 700; color: var(--color-starlight); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
+                  <span>🔑</span> <span>Demonstration Access Credentials</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.2rem;">
+                  <span>Username:</span> <code>admin</code>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span>Password:</span> <code>bulsu2026</code>
+                </div>
+                <div style="font-size: 0.74rem; color: #64748B; margin-top: 0.45rem; border-top: 1px dashed rgba(56, 189, 248, 0.15); padding-top: 0.35rem;">
+                  Temporary session authentication for IT 305 evaluation demonstration.
+                </div>
+              </div>
+
+              <!-- Error Alert Display -->
+              <div id="admin-login-error" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #FCA5A5; padding: 0.75rem 1rem; border-radius: var(--border-radius-md); font-size: 0.85rem; margin-bottom: 1.25rem;"></div>
+
+              <form id="admin-login-form">
+                <div class="form-group">
+                  <label class="form-label" for="admin-username-input">Administrator ID / Username</label>
+                  <input type="text" class="form-control" id="admin-username-input" placeholder="e.g. admin" required autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="admin-password-input">Password</label>
+                  <div class="password-input-group">
+                    <input type="password" class="form-control" id="admin-password-input" placeholder="Enter administrator password" required autocomplete="current-password">
+                    <button type="button" class="btn-toggle-password" id="btn-toggle-password" aria-label="Toggle password visibility">
+                      👁️
+                    </button>
+                  </div>
+                </div>
+
+                <div style="margin-top: 1.75rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                  <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                    <span>🔐 Sign In to Administrator Portal</span>
+                  </button>
+
+                  <a href="#home" class="btn btn-secondary" style="width: 100%; text-align: center;">
+                    <span>← Return to Citizen Homepage</span>
+                  </a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ==================================================================
+             VIEW 8: CONFIRMED APPROVED POTHOLES (#admin-approved)
+             ================================================================== -->
+        <section class="view-section" id="view-admin-approved">
+          <div class="card" style="margin-bottom: 1.5rem; background: var(--gradient-surface);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <h2>Confirmed Approved Potholes</h2>
+                <p style="margin-bottom: 0;">Verified road hazard markers currently live and visible on the public map.</p>
+              </div>
+              <div style="display: flex; gap: 0.6rem;">
+                <a href="#map" class="btn btn-outline-cyan btn-sm">
+                  <span>🗺️ View on Public Map</span>
+                </a>
+                <a href="#admin-reviews" class="btn btn-primary btn-sm">
+                  <span>Open Review Queue</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="table-responsive">
+              <table class="table-custom">
+                <thead>
+                  <tr>
+                    <th>Report ID</th>
+                    <th>Photo</th>
+                    <th>Road / Thoroughfare</th>
+                    <th>Coordinates</th>
+                    <th>Severity</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-approved-tbody">
+                  <!-- Populated dynamically by AdminReviewController -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ==================================================================
+             VIEW 9: ADMINISTRATIVE DECISION ARCHIVE & AUDIT (#admin-history)
+             ================================================================== -->
+        <section class="view-section" id="view-admin-history">
+          <div class="card" style="margin-bottom: 1.5rem; background: var(--gradient-surface);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <h2>Administrative Decision Archive</h2>
+                <p style="margin-bottom: 0;">Complete audit trail of all approved, rejected, and investigated road hazards.</p>
+              </div>
+              <div>
+                <a href="#admin-dashboard" class="btn btn-secondary btn-sm">
+                  <span>← Back to Dashboard</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="table-responsive">
+              <table class="table-custom">
+                <thead>
+                  <tr>
+                    <th>Report ID</th>
+                    <th>Photo</th>
+                    <th>Road / Location</th>
+                    <th>Submission Date</th>
+                    <th>Status</th>
+                    <th>Reviewer Notes &amp; Rationale</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-history-tbody">
+                  <!-- Populated dynamically by AdminReviewController -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ==================================================================
+             VIEW 10: DEDICATED THEME SELECTION INTERFACE (#themes)
+             ================================================================== -->
+        <section class="view-section" id="view-themes">
+          <div class="theme-selection-page-wrap">
+            <div class="theme-selection-panel">
+              
+              <div class="theme-selection-header">
+                <div class="theme-selection-title-group">
+                  <h2>Theme Selection</h2>
+                  <p class="theme-selection-subtitle">Select from six bespoke color themes crafted from our official brand palette. Changes take effect across the entire application immediately and are remembered for your browser session.</p>
+                </div>
+                <div class="theme-quick-actions">
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="ThemeManager.setTheme('brand-daylight', true)">
+                    <span>☀️ Reset Default (Daylight)</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Dedicated list of wide interactive theme cards matching reference design -->
+              <div class="theme-selection-list theme-selection-container" id="theme-selection-list" role="radiogroup" aria-label="Official Brand Themes">
+                <!-- Populated dynamically by ThemeManager.renderThemeSelectionCards -->
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+    </div>
+
+  </div>
+
+
+  <!-- ======================================================================
+       MODAL 1: REPORT SUBMISSION SUCCESS CONFIRMATION
+       ====================================================================== -->
+  <div class="modal-overlay" id="submission-success-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="card-title">
+          <span>🎉</span> <span>Road Hazard Report Queued</span>
+        </span>
+        <button type="button" class="btn-close" onclick="document.getElementById('submission-success-modal').classList.remove('active')">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div style="text-align: center; padding: 1rem 0;">
+          <div style="font-size: 3rem; margin-bottom: 0.5rem;">✅</div>
+          <h3 style="margin-bottom: 0.5rem; color: var(--color-starlight);">Report Successfully Submitted!</h3>
+          <p class="text-muted" style="max-width: 480px; margin: 0 auto 1.5rem;">
+            Your road pothole report has been received and assigned a temporary demonstration identifier. It has entered the administrator review queue.
+          </p>
+
+          <div style="background: #080D24; border: var(--border-subtle); border-radius: var(--border-radius-md); padding: 1.25rem; max-width: 420px; margin: 0 auto; text-align: left;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+              <span class="text-muted">Report ID:</span>
+              <strong class="text-cyan" id="submitted-report-id">REP-2026-006</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+              <span class="text-muted">Road:</span>
+              <strong id="submitted-report-road">MacArthur Highway</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+              <span class="text-muted">Location:</span>
+              <span id="submitted-report-brgy">Brgy. Guinhawa, Malolos</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span class="text-muted">Current Status:</span>
+              <span class="badge badge-pending">⏳ Pending Review</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('submission-success-modal').classList.remove('active'); window.location.hash='my-reports';">
+          Track on My Reports
+        </button>
+        <button type="button" class="btn btn-primary" onclick="document.getElementById('submission-success-modal').classList.remove('active'); window.location.hash='home';">
+          Done • Back to Home
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======================================================================
+       MODAL 2: ADMINISTRATOR REPORT INSPECTION & VERIFICATION MODAL
+       ====================================================================== -->
+  <div class="modal-overlay" id="admin-inspection-modal">
+    <div class="modal-box" style="max-width: 820px;">
+      <div class="modal-header">
+        <span class="card-title">
+          <span>🔍</span> <span>Inspect Road Pothole Report: <span id="inspect-modal-id" class="text-cyan">REP-2026-001</span></span>
+        </span>
+        <button type="button" class="btn-close" id="btn-close-inspect-modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="inspection-grid">
+
+          <!-- Left Inspection: High-Resolution Photo Display -->
+          <div>
+            <div style="font-size: 0.8rem; font-weight: 700; color: var(--color-muted-slate); text-transform: uppercase; margin-bottom: 0.4rem;">
+              Submitted Photograph Evidence
+            </div>
+            <div style="width: 100%; height: 260px; background: #020308; border-radius: var(--border-radius-md); overflow: hidden; border: 1px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center;">
+              <img id="inspect-modal-photo" src="" alt="Submitted Pothole Photo" style="max-width: 100%; max-height: 260px; object-fit: contain;">
+            </div>
+
+            <!-- Mini Map Inspection Canvas -->
+            <div style="margin-top: 1rem;">
+              <div style="font-size: 0.8rem; font-weight: 700; color: var(--color-muted-slate); text-transform: uppercase; margin-bottom: 0.4rem;">
+                Pinned Geolocation Coordinates
+              </div>
+              <div id="admin-inspection-map" style="height: 180px; width: 100%;"></div>
+            </div>
+          </div>
+
+          <!-- Right Inspection: Details, Verification Controls & Notes -->
+          <div style="display: flex; flex-direction: column; gap: 0.9rem;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(56, 189, 248, 0.1); padding-bottom: 0.6rem;">
+              <span class="text-muted">Current Review Status:</span>
+              <span id="inspect-modal-status-badge">
+                <span class="badge badge-pending">Pending Review</span>
+              </span>
+            </div>
+
+            <div>
+              <span class="text-muted" style="font-size: 0.78rem;">Road / Street:</span>
+              <div id="inspect-modal-road" style="font-size: 1rem; font-weight: 700; color: var(--color-starlight);">MacArthur Highway</div>
+            </div>
+
+            <div>
+              <span class="text-muted" style="font-size: 0.78rem;">Barangay &amp; City:</span>
+              <div id="inspect-modal-brgy" style="font-size: 0.92rem; color: var(--color-electric-cyan);">Brgy. Guinhawa, Malolos City</div>
+            </div>
+
+            <div>
+              <span class="text-muted" style="font-size: 0.78rem;">Coordinates:</span>
+              <div id="inspect-modal-coords" class="text-muted" style="font-size: 0.85rem; font-family: monospace;">14.85270° N, 120.81600° E</div>
+            </div>
+
+            <div>
+              <span class="text-muted" style="font-size: 0.78rem;">Submitted By &amp; Date:</span>
+              <div style="font-size: 0.85rem; color: var(--color-starlight);">
+                <span id="inspect-modal-reporter">Citizen Reporter</span> • <span id="inspect-modal-date" class="text-muted">2026-10-15</span>
+              </div>
+            </div>
+
+            <div>
+              <span class="text-muted" style="font-size: 0.78rem;">Citizen Description:</span>
+              <div id="inspect-modal-desc" style="font-size: 0.85rem; color: var(--color-starlight); background: #080D24; padding: 0.6rem; border-radius: var(--border-radius-sm); border: var(--border-subtle); line-height: 1.4;">
+                Pothole cavity description.
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0.5rem;">
+              <label class="form-label" for="inspect-modal-severity" style="font-size: 0.8rem;">Assigned Severity Classification</label>
+              <select class="form-select" id="inspect-modal-severity" style="padding: 0.45rem 0.75rem; font-size: 0.88rem;">
+                <option value="Low">Low - Minor road surface wear</option>
+                <option value="Medium">Medium - Standard pothole cavity</option>
+                <option value="High">High - Deep crater / hazardous swerving</option>
+                <option value="Critical">Critical - Urgent traffic safety hazard</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="inspect-modal-notes" style="font-size: 0.8rem;">Administrator Review Notes / Action Justification</label>
+              <textarea class="form-control" id="inspect-modal-notes" rows="2" placeholder="Record verification rationale or maintenance schedule..."></textarea>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer" style="justify-content: space-between;">
+        <span class="text-muted" style="font-size: 0.78rem;">
+          Action immediately synchronizes public map &amp; queue.
+        </span>
+        <div style="display: flex; gap: 0.75rem;">
+          <button type="button" class="btn btn-danger" id="btn-action-reject">
+            ✕ Reject Report
+          </button>
+          <button type="button" class="btn btn-success" id="btn-action-approve">
+            ✓ Approve &amp; Publish to Map
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======================================================================
+       MODAL 3: GOOGLE MAPS API KEY CONFIGURATION MODAL
+       ====================================================================== -->
+  <div class="modal-overlay" id="maps-config-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="card-title">
+          <span>⚙️</span> <span>Google Maps JavaScript API Setup</span>
+        </span>
+        <button type="button" class="btn-close" id="btn-close-maps-modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.25rem;">
+          The system currently operates with a <strong>High-Fidelity Interactive Fallback Map</strong> (CartoDB Dark Matter / Leaflet) styled in our Space-Inspired theme, enabling full panning, zooming, marker placement, coordinate picking, and photo inspection without an external API key.
+        </p>
+
+        <div class="card" style="background: #080D24; margin-bottom: 1.25rem; border: var(--border-accent);">
+          <h4 style="margin-bottom: 0.4rem; color: var(--color-electric-cyan);">How to Activate Official Google Maps JS API</h4>
+          <ol style="margin-left: 1.25rem; font-size: 0.85rem; color: var(--color-muted-slate); line-height: 1.6;">
+            <li>Obtain a valid API key from the Google Cloud Console with <em>Maps JavaScript API</em> enabled.</li>
+            <li>Paste your key below and click <strong>Apply Google Maps Key</strong>, or append <code>?maps_key=YOUR_KEY</code> to the URL.</li>
+            <li>If no key is supplied, the application continues to run seamlessly on the dark interactive fallback.</li>
+          </ol>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label" for="input-google-maps-key">Enter Google Maps API Key</label>
+          <input type="text" class="form-control" id="input-google-maps-key" placeholder="AIzaSy...">
+          <div class="form-help">Do not commit private production server secrets. Browser keys should be origin-restricted.</div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('maps-config-modal').classList.remove('active')">
+          Keep Using Fallback Map
+        </button>
+        <button type="button" class="btn btn-primary" id="btn-apply-maps-key">
+          Apply Google Maps Key
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======================================================================
+       MODAL 4: THEME QUICK SWITCHER MODAL
+       ====================================================================== -->
+  <div class="modal-overlay" id="theme-config-modal">
+    <div class="modal-box theme-modal-box">
+      <div class="modal-header">
+        <span class="card-title" style="color: #FFFFFF;">
+          <span>🎨</span> <span>Select Application Theme</span>
+        </span>
+        <button type="button" class="btn-close" id="btn-close-theme-modal" aria-label="Close theme selection dialog">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: #94A3B8; margin-bottom: 1.25rem; line-height: 1.5;">
+          Choose from six bespoke color schemes crafted from our official brand palette. Changes apply immediately across the entire application and persist in local storage.
+        </p>
+        <div class="theme-selection-list theme-selection-container" id="theme-modal-selection-list" role="radiogroup" aria-label="Quick theme selection">
+          <!-- Populated dynamically by ThemeManager -->
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <span style="font-size: 0.82rem; color: #94A3B8;">💾 Preference saves automatically to browser storage.</span>
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="ThemeManager.setTheme('brand-daylight', true)" title="Reset to official Daylight theme">
+            ☀️ Reset Default
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" id="btn-done-theme-modal" onclick="document.getElementById('theme-config-modal').classList.remove('active')">
+            ✓ Done
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Global Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+
+  <!-- ======================================================================
+       SCRIPTS & APPLICATION BUNDLE
+       ====================================================================== -->
+  <!-- Leaflet Library (Offline Local File in D:\Adv Web\js\leaflet.js) -->
+  <script src="js/leaflet.js"></script>
+
+  <!-- In-Memory Data & State Management -->
+  <script src="js/dummy-data.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/reports.js"></script>
+
+  <!-- Multi-Theme System Registry & Manager -->
+  <script src="js/themes.js"></script>
+
+  <!-- Core Modules -->
+  <script src="js/google-map.js"></script>
+  <script src="js/report-form.js"></script>
+  <script src="js/admin-review.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>

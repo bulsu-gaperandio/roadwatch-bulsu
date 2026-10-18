@@ -1,0 +1,332 @@
+/* ==========================================================================
+   Bulacan State University - CICT | IT 305: Advanced Web Development
+   Layout Architecture: Persistent Sidebar, Topbar & View Routing Containers
+   ========================================================================== */
+
+/* Main App Shell Layout */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--color-sidebar-bg);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  transition: transform var(--transition-speed) ease, width var(--transition-speed) ease, background-color var(--transition-speed) ease;
+}
+
+.sidebar-brand {
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.sidebar-logo {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-sidebar-text);
+  letter-spacing: -0.02em;
+}
+
+.brand-subtitle {
+  font-size: 0.72rem;
+  color: var(--color-primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+[data-theme-mode="dark"] .brand-subtitle {
+  color: var(--color-secondary);
+}
+
+/* Sidebar Mode Switcher (Citizen vs Admin) */
+.role-switcher-card {
+  margin: 1.25rem 1rem 0.5rem;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  padding: 0.35rem;
+  display: flex;
+  gap: 0.35rem;
+}
+
+.role-tab {
+  flex: 1;
+  padding: 0.45rem 0.2rem;
+  background: transparent;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.role-tab.active {
+  background: var(--gradient-brand);
+  color: #FFFFFF;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(109, 40, 217, 0.3);
+}
+
+[data-theme-mode="dark"] .role-tab.active {
+  color: #050B16;
+  box-shadow: 0 2px 8px rgba(0, 242, 254, 0.3);
+}
+
+/* Sidebar Navigation */
+.sidebar-nav {
+  flex: 1;
+  padding: 1rem 0.75rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.nav-section-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.6rem 0.75rem 0.3rem;
+  margin-top: 0.5rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--border-radius-md);
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all var(--transition-speed) ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+  user-select: none;
+}
+
+.nav-item svg {
+  width: 19px;
+  height: 19px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+  flex-shrink: 0;
+  transition: stroke var(--transition-speed);
+}
+
+.nav-item:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-subtle);
+}
+
+.nav-item.active {
+  background: rgba(109, 40, 217, 0.12);
+  color: var(--color-primary);
+  border-color: rgba(109, 40, 217, 0.3);
+  font-weight: 600;
+  box-shadow: 0 0 15px rgba(109, 40, 217, 0.1);
+}
+
+[data-theme-mode="dark"] .nav-item.active {
+  background: rgba(0, 242, 254, 0.12);
+  color: var(--color-secondary);
+  border-color: rgba(0, 242, 254, 0.3);
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.1);
+}
+
+.nav-item.active svg {
+  stroke: currentColor;
+}
+
+.nav-badge {
+  margin-left: auto;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.72rem;
+  border-radius: var(--border-radius-full);
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--color-status-pending);
+  font-weight: 700;
+}
+
+/* Sidebar Footer (Academic affiliation) */
+.sidebar-footer {
+  padding: 1.1rem;
+  border-top: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-alt);
+}
+
+.academic-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+.academic-badge strong {
+  color: var(--color-text-primary);
+  font-size: 0.78rem;
+}
+
+/* Content Area Layout */
+.main-wrapper {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left var(--transition-speed) ease;
+  width: calc(100% - var(--sidebar-width));
+}
+
+/* Top Navigation Bar */
+.topbar {
+  height: var(--header-height);
+  background: var(--color-topbar-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.mobile-menu-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  padding: 0.45rem;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-breadcrumb {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.page-subtitle {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.topbar-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--color-surface-alt);
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-size: 0.82rem;
+}
+
+.stat-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.stat-chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.stat-chip-dot.pending { background-color: var(--color-status-pending); }
+.stat-chip-dot.approved { background-color: var(--color-status-approved); }
+
+/* Main Dynamic Content Container */
+.content-area {
+  flex: 1;
+  padding: 2rem 2.25rem;
+  max-width: var(--content-max-width);
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* SPA View Section Containers */
+.view-section {
+  display: none;
+  animation: viewFadeIn 0.25s ease-out forwards;
+}
+
+.view-section.active {
+  display: block;
+}
+
+@keyframes viewFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <radialGradient id="craterDepth2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#050811"/>
+      <stop offset="60%" stop-color="#141c2b"/>
+      <stop offset="100%" stop-color="#2d3748"/>
+    </radialGradient>
+    <filter id="noiseFilter2">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.2  0 0 0 0 0.22  0 0 0 0 0.28 0 0 0 0.35 0"/>
+    </filter>
+  </defs>
+
+  <!-- Asphalt Road Base -->
+  <rect width="800" height="500" fill="#202736" />
+  <rect width="800" height="500" filter="url(#noiseFilter2)" opacity="0.38" />
+
+  <!-- Road Curb and Sidewalk edge -->
+  <rect x="0" y="0" width="800" height="45" fill="#475569" opacity="0.8"/>
+  <line x1="0" y1="45" x2="800" y2="45" stroke="#64748B" stroke-width="3"/>
+
+  <!-- Multiple road cracks branching toward curb -->
+  <path d="M 120 180 L 190 210 L 250 190 L 310 240 L 380 230" stroke="#0f172a" stroke-width="3.5" fill="none"/>
+  <path d="M 250 190 L 270 120 L 320 100" stroke="#0f172a" stroke-width="2.5" fill="none"/>
+  <path d="M 450 250 L 520 220 L 590 260 L 640 230" stroke="#0f172a" stroke-width="3" fill="none"/>
+
+  <!-- Pothole Formation: Elongated Pothole Trench -->
+  <path d="M 280 220 C 360 200, 480 210, 560 240 C 600 270, 580 320, 520 345 C 440 370, 320 365, 260 330 C 220 290, 230 240, 280 220 Z" 
+        fill="#1e293b" stroke="#334155" stroke-width="5"/>
+  <path d="M 300 235 C 370 220, 470 225, 540 250 C 570 275, 550 310, 500 330 C 430 350, 330 345, 280 315 C 250 285, 260 250, 300 235 Z" 
+        fill="url(#craterDepth2)"/>
+
+  <!-- Crumbling asphalt blocks -->
+  <polygon points="340,260 365,255 375,275 350,280" fill="#334155" stroke="#1e293b" stroke-width="1.5"/>
+  <polygon points="420,285 450,280 460,305 430,310" fill="#3b485d" stroke="#1e293b" stroke-width="1.5"/>
+  <polygon points="470,250 500,248 495,270 465,268" fill="#475569" stroke="#1e293b" stroke-width="1.5"/>
+
+  <!-- Geotag Stamp -->
+  <rect x="25" y="65" width="280" height="68" rx="8" fill="#050816" fill-opacity="0.88" stroke="#8B5CF6" stroke-width="1.2"/>
+  <text x="40" y="90" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" font-weight="bold" fill="#8B5CF6">FIELD PHOTO • PASEO DEL CONGRESO</text>
+  <text x="40" y="112" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11" fill="#94A3B8">Brgy. San Gabriel, Malolos City</text>
+</svg>

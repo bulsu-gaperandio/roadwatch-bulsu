@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <radialGradient id="craterDepth4" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#030712"/>
+      <stop offset="70%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#1f2937"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Asphalt Road Base -->
+  <rect width="800" height="500" fill="#1e2430" />
+
+  <!-- Multiple clustered potholes (alligator cracking & severe road degradation) -->
+  <circle cx="320" cy="220" r="70" fill="#111827" stroke="#374151" stroke-width="4"/>
+  <circle cx="320" cy="220" r="58" fill="url(#craterDepth4)"/>
+  
+  <circle cx="480" cy="270" r="95" fill="#111827" stroke="#374151" stroke-width="5"/>
+  <circle cx="480" cy="270" r="82" fill="url(#craterDepth4)"/>
+
+  <circle cx="360" cy="330" r="55" fill="#111827" stroke="#374151" stroke-width="3"/>
+  <circle cx="360" cy="330" r="45" fill="url(#craterDepth4)"/>
+
+  <!-- Webbing crack fissures connecting clusters -->
+  <path d="M 320 220 L 480 270 M 360 330 L 480 270 M 320 220 L 360 330 M 480 270 L 610 240 M 210 200 L 320 220" 
+        stroke="#0b0f19" stroke-width="3" fill="none"/>
+
+  <!-- Geotag Stamp -->
+  <rect x="25" y="25" width="280" height="68" rx="8" fill="#050816" fill-opacity="0.88" stroke="#EF4444" stroke-width="1.2"/>
+  <text x="40" y="50" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="13" font-weight="bold" fill="#EF4444">FIELD PHOTO • TIKAY HIGHWAY</text>
+  <text x="40" y="72" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto" font-size="11" fill="#94A3B8">Brgy. Tikay, Malolos City</text>
+</svg>

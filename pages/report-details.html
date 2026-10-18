@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Details & Inspection • RoadWatch BulSU</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/logo.svg">
+  <link rel="stylesheet" href="../css/leaflet.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/map.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <script>
+    // Access Control Guard: Redirect unauthenticated visitors to admin sign-in
+    if (sessionStorage.getItem('roadwatch_admin_auth') !== 'true') {
+      window.location.replace('admin-login.html?redirect=report-details');
+    } else {
+      window.location.replace('../index.html#admin-reviews');
+    }
+  </script>
+</head>
+<body>
+  <div style="padding: 3rem; text-align: center; color: var(--color-starlight);">
+    <h2>Verifying Administrator Access...</h2>
+    <p class="text-muted">Loading Report Inspection Details...</p>
+    <p><a href="admin-login.html" class="btn btn-primary">Sign In Required</a></p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,308 @@
+/* ==========================================================================
+   Bulacan State University - CICT | IT 305: Advanced Web Development
+   Official Brand Sheet Centralized CSS Variables & Multi-Theme System
+   
+   Official Brand Palette:
+   - Primary: Cosmic Purple (#6D28D9), Luminous Lavender (#A78BFA)
+   - Secondary: Deep Nebula Blue (#075985), Electric Cyan (#00F2FE)
+   - Neutrals: Starlight Ice (#EBF3FC), Sky Mist (#E0F2FE), Lavender Mist (#F3EEFF),
+               White (#FFFFFF), Deep Space Black (#050B16), Royal Indigo (#0A1432),
+               Luminous Indigo (#13224E), Night Surface (#0E1726)
+   ========================================================================== */
+
+:root {
+  /* Official Brand Constants */
+  --brand-cosmic-purple: #6D28D9;
+  --brand-luminous-lavender: #A78BFA;
+  --brand-deep-nebula-blue: #075985;
+  --brand-electric-cyan: #00F2FE;
+  
+  --brand-starlight-ice: #EBF3FC;
+  --brand-sky-mist: #E0F2FE;
+  --brand-lavender-mist: #F3EEFF;
+  --brand-white: #FFFFFF;
+  --brand-deep-space-black: #050B16;
+  --brand-royal-indigo: #0A1432;
+  --brand-luminous-indigo: #13224E;
+  --brand-night-surface: #0E1726;
+
+  /* Global Fixed Layout Dimensions */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 72px;
+  --header-height: 70px;
+  --content-max-width: 1400px;
+  --transition-speed: 0.25s;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* Standard Border Radii */
+  --border-radius-sm: 6px;
+  --border-radius-md: 10px;
+  --border-radius-lg: 16px;
+  --border-radius-xl: 22px;
+  --border-radius-full: 9999px;
+
+  /* Modals & Overlays */
+  --shadow-modal: 0 24px 48px -12px rgba(0, 0, 0, 0.65);
+
+  /* Semantic Aliases for Compatibility */
+  --color-starlight: var(--color-text-primary);
+  --color-muted-slate: var(--color-text-secondary);
+  --color-deep-space: var(--color-background);
+  --color-surface-card: var(--color-card-bg);
+  --border-subtle: 1px solid var(--color-border-subtle);
+  --color-electric-cyan: var(--brand-electric-cyan);
+  --color-cosmic-purple: var(--brand-cosmic-purple);
+  --color-nebula-blue: var(--brand-deep-nebula-blue);
+  --shadow-glow-cyan: var(--shadow-glow-accent);
+}
+
+/* ==========================================================================
+   STATUS BADGE COLOR SYSTEM (Official Brand Sheet)
+   ========================================================================== */
+
+/* Light Theme Mode Status Badges */
+[data-theme-mode="light"] {
+  --status-submitted-bg: #334155;
+  --status-submitted-text: #F8FAFC;
+  --status-under-review-bg: #78350F;
+  --status-under-review-text: #FEF3C7;
+  --status-in-progress-bg: #075985;
+  --status-in-progress-text: #F0F9FF;
+  --status-resolved-bg: #064E3B;
+  --status-resolved-text: #ECFDF5;
+
+  /* Map existing status names to official table */
+  --color-status-pending-bg: var(--status-under-review-bg);
+  --color-status-pending: var(--status-under-review-text);
+  --color-status-approved-bg: var(--status-in-progress-bg);
+  --color-status-approved: var(--status-in-progress-text);
+  --color-status-rejected-bg: #7F1D1D;
+  --color-status-rejected: #FEE2E2;
+  --color-status-resolved-bg: var(--status-resolved-bg);
+  --color-status-resolved: var(--status-resolved-text);
+
+  --severity-low: #064E3B;
+  --severity-medium: #78350F;
+  --severity-high: #9A3412;
+  --severity-critical: #991B1B;
+}
+
+/* Dark Theme Mode Status Badges */
+[data-theme-mode="dark"] {
+  --status-submitted-bg: #E2E8F0;
+  --status-submitted-text: #050B16;
+  --status-under-review-bg: #FEF3C7;
+  --status-under-review-text: #78350F;
+  --status-in-progress-bg: #E0F2FE;
+  --status-in-progress-text: #075985;
+  --status-resolved-bg: #D1FAE5;
+  --status-resolved-text: #064E3B;
+
+  /* Map existing status names to official table */
+  --color-status-pending-bg: var(--status-under-review-bg);
+  --color-status-pending: var(--status-under-review-text);
+  --color-status-approved-bg: var(--status-in-progress-bg);
+  --color-status-approved: var(--status-in-progress-text);
+  --color-status-rejected-bg: #FEE2E2;
+  --color-status-rejected: #991B1B;
+  --color-status-resolved-bg: var(--status-resolved-bg);
+  --color-status-resolved: var(--status-resolved-text);
+
+  --severity-low: #34D399;
+  --severity-medium: #FBBF24;
+  --severity-high: #FB923C;
+  --severity-critical: #F87171;
+}
+
+/* ==========================================================================
+   THEME 1: BRAND SHEET DAYLIGHT (Default for New Users, Light)
+   ========================================================================== */
+:root,
+html[data-theme="brand-daylight"] {
+  --color-primary: #6D28D9;       /* Cosmic Purple */
+  --color-secondary: #075985;     /* Deep Nebula Blue */
+  --color-background: #EBF3FC;    /* Starlight Ice */
+  --color-surface: #FFFFFF;       /* White */
+  --color-surface-elevated: #F8FAFC;
+  --color-surface-alt: #F3EEFF;   /* Lavender Mist */
+  --color-surface-hover: #F1F5F9;
+  --color-text-primary: #050B16;  /* Deep Space Black */
+  --color-text-secondary: #475569;/* Slate Gray */
+  --color-text-muted: #64748B;
+  
+  --color-sidebar-bg: #FFFFFF;
+  --color-sidebar-text: #050B16;
+  --color-topbar-bg: rgba(255, 255, 255, 0.92);
+  --color-input-bg: #FFFFFF;
+  --color-card-bg: #FFFFFF;
+
+  --color-border: rgba(7, 89, 133, 0.16);
+  --color-border-subtle: rgba(7, 89, 133, 0.10);
+  --color-border-hover: #6D28D9;
+  --color-border-active: #6D28D9;
+  --shadow-card: 0 4px 18px -2px rgba(7, 89, 133, 0.08);
+  --shadow-glow-accent: 0 0 16px rgba(109, 40, 217, 0.22);
+  --gradient-brand: linear-gradient(135deg, #6D28D9 0%, #075985 100%);
+  --gradient-surface: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+  --map-tile-theme: light;
+}
+
+/* ==========================================================================
+   THEME 2: SPACE CORPORATE AURORA (Dark)
+   ========================================================================== */
+html[data-theme="corporate-aurora"] {
+  --color-primary: #A78BFA;       /* Luminous Lavender */
+  --color-secondary: #00F2FE;     /* Electric Cyan */
+  --color-background: #0A1432;    /* Royal Indigo */
+  --color-surface: #13224E;       /* Luminous Indigo */
+  --color-surface-elevated: #182B63;
+  --color-surface-alt: #0E1726;   /* Night Surface */
+  --color-surface-hover: #1C3375;
+  --color-text-primary: #EBF3FC;  /* Starlight Ice */
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+  
+  --color-sidebar-bg: #0D1A3E;
+  --color-sidebar-text: #EBF3FC;
+  --color-topbar-bg: rgba(10, 20, 50, 0.88);
+  --color-input-bg: #0A1432;
+  --color-card-bg: #13224E;
+
+  --color-border: rgba(0, 242, 254, 0.20);
+  --color-border-subtle: rgba(56, 189, 248, 0.12);
+  --color-border-hover: #00F2FE;
+  --color-border-active: #00F2FE;
+  --shadow-card: 0 8px 24px -4px rgba(2, 4, 15, 0.70);
+  --shadow-glow-accent: 0 0 20px rgba(0, 242, 254, 0.25);
+  --gradient-brand: linear-gradient(135deg, #A78BFA 0%, #00F2FE 100%);
+  --gradient-surface: linear-gradient(180deg, #16285B 0%, #0F1D43 100%);
+  --map-tile-theme: dark;
+}
+
+/* ==========================================================================
+   THEME 3: NEBULA SKY LIGHT (Light)
+   ========================================================================== */
+html[data-theme="nebula-sky"] {
+  --color-primary: #075985;       /* Deep Nebula Blue */
+  --color-secondary: #6D28D9;     /* Cosmic Purple */
+  --color-background: #E0F2FE;    /* Sky Mist */
+  --color-surface: #FFFFFF;       /* White */
+  --color-surface-elevated: #F0F9FF;
+  --color-surface-alt: #EBF3FC;   /* Starlight Ice */
+  --color-surface-hover: #E2E8F0;
+  --color-text-primary: #050B16;  /* Deep Space Black */
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748B;
+  
+  --color-sidebar-bg: #FFFFFF;
+  --color-sidebar-text: #050B16;
+  --color-topbar-bg: rgba(255, 255, 255, 0.92);
+  --color-input-bg: #FFFFFF;
+  --color-card-bg: #FFFFFF;
+
+  --color-border: rgba(7, 89, 133, 0.20);
+  --color-border-subtle: rgba(7, 89, 133, 0.12);
+  --color-border-hover: #075985;
+  --color-border-active: #075985;
+  --shadow-card: 0 6px 20px -2px rgba(7, 89, 133, 0.09);
+  --shadow-glow-accent: 0 0 16px rgba(7, 89, 133, 0.20);
+  --gradient-brand: linear-gradient(135deg, #075985 0%, #6D28D9 100%);
+  --gradient-surface: linear-gradient(180deg, #FFFFFF 0%, #F0F9FF 100%);
+  --map-tile-theme: light;
+}
+
+/* ==========================================================================
+   THEME 4: COSMIC PURPLE STUDIO (Light)
+   ========================================================================== */
+html[data-theme="cosmic-studio"] {
+  --color-primary: #6D28D9;       /* Cosmic Purple */
+  --color-secondary: #075985;     /* Deep Nebula Blue */
+  --color-background: #F3EEFF;    /* Lavender Mist */
+  --color-surface: #FFFFFF;       /* White */
+  --color-surface-elevated: #FAF7FF;
+  --color-surface-alt: #EBF3FC;   /* Starlight Ice */
+  --color-surface-hover: #EBE4FA;
+  --color-text-primary: #050B16;  /* Deep Space Black */
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748B;
+  
+  --color-sidebar-bg: #FFFFFF;
+  --color-sidebar-text: #050B16;
+  --color-topbar-bg: rgba(255, 255, 255, 0.92);
+  --color-input-bg: #FFFFFF;
+  --color-card-bg: #FFFFFF;
+
+  --color-border: rgba(109, 40, 217, 0.18);
+  --color-border-subtle: rgba(109, 40, 217, 0.10);
+  --color-border-hover: #6D28D9;
+  --color-border-active: #6D28D9;
+  --shadow-card: 0 6px 20px -2px rgba(109, 40, 217, 0.08);
+  --shadow-glow-accent: 0 0 18px rgba(109, 40, 217, 0.22);
+  --gradient-brand: linear-gradient(135deg, #6D28D9 0%, #A78BFA 100%);
+  --gradient-surface: linear-gradient(180deg, #FFFFFF 0%, #FAF7FF 100%);
+  --map-tile-theme: light;
+}
+
+/* ==========================================================================
+   THEME 5: DEEP SPACE NIGHT (Dark)
+   ========================================================================== */
+html[data-theme="deep-space"] {
+  --color-primary: #A78BFA;       /* Luminous Lavender */
+  --color-secondary: #00F2FE;     /* Electric Cyan */
+  --color-background: #050B16;    /* Deep Space Black */
+  --color-surface: #0E1726;       /* Night Surface */
+  --color-surface-elevated: #13224E;/* Luminous Indigo */
+  --color-surface-alt: #13224E;
+  --color-surface-hover: #182845;
+  --color-text-primary: #EBF3FC;  /* Starlight Ice */
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+  
+  --color-sidebar-bg: #070E1C;
+  --color-sidebar-text: #EBF3FC;
+  --color-topbar-bg: rgba(5, 11, 22, 0.88);
+  --color-input-bg: #080D1A;
+  --color-card-bg: #0E1726;
+
+  --color-border: rgba(0, 242, 254, 0.22);
+  --color-border-subtle: rgba(56, 189, 248, 0.14);
+  --color-border-hover: #00F2FE;
+  --color-border-active: #00F2FE;
+  --shadow-card: 0 8px 24px -4px rgba(2, 4, 15, 0.80);
+  --shadow-glow-accent: 0 0 20px rgba(0, 242, 254, 0.25);
+  --gradient-brand: linear-gradient(135deg, #00F2FE 0%, #A78BFA 100%);
+  --gradient-surface: linear-gradient(180deg, #101C30 0%, #0A111F 100%);
+  --map-tile-theme: dark;
+}
+
+/* ==========================================================================
+   THEME 6: NEBULA MIDNIGHT (Dark)
+   ========================================================================== */
+html[data-theme="nebula-midnight"] {
+  --color-primary: #00F2FE;       /* Electric Cyan */
+  --color-secondary: #A78BFA;     /* Luminous Lavender */
+  --color-background: #0A1432;    /* Royal Indigo */
+  --color-surface: #0E1726;       /* Night Surface */
+  --color-surface-elevated: #13224E;/* Luminous Indigo */
+  --color-surface-alt: #13224E;
+  --color-surface-hover: #172640;
+  --color-text-primary: #EBF3FC;  /* Starlight Ice */
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+  
+  --color-sidebar-bg: #081028;
+  --color-sidebar-text: #EBF3FC;
+  --color-topbar-bg: rgba(10, 20, 50, 0.88);
+  --color-input-bg: #060B1E;
+  --color-card-bg: #0E1726;
+
+  --color-border: rgba(0, 242, 254, 0.24);
+  --color-border-subtle: rgba(167, 139, 250, 0.16);
+  --color-border-hover: #00F2FE;
+  --color-border-active: #00F2FE;
+  --shadow-card: 0 8px 24px -4px rgba(2, 4, 15, 0.75);
+  --shadow-glow-accent: 0 0 20px rgba(0, 242, 254, 0.30);
+  --gradient-brand: linear-gradient(135deg, #00F2FE 0%, #A78BFA 100%);
+  --gradient-surface: linear-gradient(180deg, #101B2E 0%, #0A1220 100%);
+  --map-tile-theme: dark;
+}

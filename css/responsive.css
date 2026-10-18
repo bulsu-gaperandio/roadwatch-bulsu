@@ -1,0 +1,172 @@
+/* ==========================================================================
+   Bulacan State University - CICT | IT 305: Advanced Web Development
+   Responsive Breakpoints & Mobile Optimization
+   ========================================================================== */
+
+/* Large Screens (Desktop First) */
+@media (min-width: 1200px) {
+  .reporting-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 1.75rem;
+  }
+
+  .inspection-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 1.75rem;
+  }
+}
+
+/* Tablet Screens (<= 1024px) */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 230px;
+  }
+
+  .content-area {
+    padding: 1.5rem;
+  }
+
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .map-page-wrapper {
+    height: auto;
+    min-height: 550px;
+  }
+
+  .map-canvas-container {
+    min-height: 440px;
+  }
+
+  .map-side-drawer {
+    width: 320px;
+  }
+}
+
+/* Mobile Screens (<= 768px) */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 270px;
+    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.8);
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 95;
+  }
+
+  .sidebar-backdrop.active {
+    display: block;
+  }
+
+  .main-wrapper {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  .topbar {
+    padding: 0 1rem;
+  }
+
+  .topbar-stats {
+    display: none;
+  }
+
+  .content-area {
+    padding: 1.25rem 1rem;
+  }
+
+  .stat-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .card {
+    padding: 1.2rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .map-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .map-search-box {
+    width: 100%;
+  }
+
+  .map-filters {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .map-side-drawer {
+    position: fixed;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-height: 75vh;
+    border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
+    transform: translateY(110%);
+  }
+
+  .map-side-drawer.open {
+    transform: translateY(0);
+  }
+
+  .map-legend-card {
+    display: none; /* Hide floating legend on very small mobile to maximize touch map space */
+  }
+
+  .modal-box {
+    width: 95%;
+    max-height: 94vh;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+}
+
+/* Small Handhelds (<= 480px) */
+@media (max-width: 480px) {
+  h1 { font-size: 1.7rem; }
+  h2 { font-size: 1.4rem; }
+  h3 { font-size: 1.2rem; }
+
+  .page-title {
+    font-size: 1.1rem;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
